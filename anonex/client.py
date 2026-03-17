@@ -336,14 +336,19 @@ class AnonExClient:
 
     def create_order(self, symbol: str, side: str, type: str = 'limit',
                      quantity: str = '0', price: str = '0',
-                     user_provided_id: str = None, strict_validate: bool = False) -> Dict:
-        """Create a new order. side: buy/sell. type: limit/market."""
+                     user_provided_id: str = None, strict_validate: bool = False,
+                     quote_order_qty: str = None) -> Dict:
+        """Create a new order. side: buy/sell. type: limit/market.
+        For market buy orders, pass quote_order_qty to specify total spend in quote currency
+        (e.g. USDT). The engine fills as much as possible within the budget."""
         body = {
             'symbol': symbol, 'side': side, 'type': type,
             'quantity': quantity, 'price': price, 'strictValidate': strict_validate
         }
         if user_provided_id:
             body['userProvidedId'] = user_provided_id
+        if quote_order_qty:
+            body['quoteOrderQty'] = quote_order_qty
         return self._post('/api/v2/createorder', body, auth=True)
 
     def create_trigger_order(self, symbol: str, stoptriggertype: str, stoptriggerprice: str,
