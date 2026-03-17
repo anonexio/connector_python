@@ -285,14 +285,18 @@ class AnonExWebSocket:
     def new_order(self, symbol: str, side: str, type: str = 'limit',
                   quantity: str = '0', price: str = '0',
                   user_provided_id: str = None, strict_validate: bool = False,
+                  quote_order_qty: str = None,
                   callback: Optional[Callable] = None):
-        """Place a new order via WebSocket (requires login)."""
+        """Place a new order via WebSocket (requires login).
+        For market buy orders, pass quote_order_qty to specify total spend in quote currency."""
         params = {
             'symbol': symbol, 'side': side, 'type': type,
             'quantity': quantity, 'price': price, 'strictValidate': strict_validate
         }
         if user_provided_id:
             params['userProvidedId'] = user_provided_id
+        if quote_order_qty:
+            params['quoteOrderQty'] = quote_order_qty
         self.send('newOrder', params, callback)
 
     def new_trigger_order(self, symbol: str, stoptriggertype: str, stoptriggerprice: str,
